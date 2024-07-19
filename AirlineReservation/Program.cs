@@ -1,4 +1,8 @@
+using System.Text.Json.Serialization;
 using AirlineReservation.Data;
+using AirlineReservation.Repository;
+using AirlineReservation.Repository.IRepository;
+using AirlineReservation.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,9 +13,23 @@ builder.Services.AddDbContext<AirlineContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AirlineSQLConnection"));
 });
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    // Configure JSON options to use string representation for enums
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
+
+// Register Repository
+builder.Services.AddScoped<IFlightRepository, FlightRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
+// Register Services
+builder.Services.AddScoped<IFlightService, FlightService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
