@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AirlineReservation.Models.Enum;
 
-namespace AirlineReservation.Models
+namespace AirlineReservation.Models.Dto
 {
-    public class Flight
+    public class FlightAddDTO
     {
-        public int Id { get; set; }
         [Required]
         public string FlightNumber { get; set; }
         [Required]

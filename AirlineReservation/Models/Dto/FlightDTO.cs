@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AirlineReservation.Models.Enum;
 
-namespace AirlineReservation.Models
+namespace AirlineReservation.Models.Dto
 {
-    public class Flight
+    public class FlightDTO
     {
         public int Id { get; set; }
         [Required]
