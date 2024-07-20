@@ -36,7 +36,7 @@ namespace AirlineReservation.Repository
             return await _airlineDb.Flights.ToListAsync();
         }
 
-        public async Task<Flight> GetFlight(int flightId)
+        public async Task<Flight> GetFlightByIdAsync(int flightId)
         {
             return await _airlineDb.Flights.FirstOrDefaultAsync(u => u.Id == flightId);
         }
@@ -50,6 +50,11 @@ namespace AirlineReservation.Repository
         public async Task SaveAsync()
         {
             await _airlineDb.SaveChangesAsync();
+        }
+
+        public async Task<Flight> GetFlightByNumberAsync(string flightNumber)
+        {
+            return await _airlineDb.Flights.FirstOrDefaultAsync(u => u.FlightNumber == flightNumber);
         }
     }
 }
