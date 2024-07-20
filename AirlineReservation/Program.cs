@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using AirlineReservation;
 using AirlineReservation.Data;
 using AirlineReservation.Repository;
 using AirlineReservation.Repository.IRepository;
@@ -19,6 +20,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 // Register Repository
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
