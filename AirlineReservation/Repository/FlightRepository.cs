@@ -7,9 +7,9 @@ namespace AirlineReservation.Repository
 {
     public class FlightRepository : IFlightRepository
     {
-        private readonly AirlineContext _airlineDb;
+        private readonly AirlineDbContext _airlineDb;
 
-        public FlightRepository(AirlineContext airlineDb)
+        public FlightRepository(AirlineDbContext airlineDb)
         {
             _airlineDb = airlineDb;
         }
