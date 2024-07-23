@@ -1,6 +1,6 @@
 ﻿using AirlineReservation.Models;
 
-namespace AirlineReservation.Services
+namespace AirlineReservation.Services.IServices
 {
     public interface IFlightService
     {
