@@ -4,12 +4,14 @@ using AirlineReservation.Data;
 using AirlineReservation.Repository;
 using AirlineReservation.Repository.IRepository;
 using AirlineReservation.Services;
+using AirlineReservation.Services.IServices;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<AirlineContext>(options =>
+builder.Services.AddDbContext<AirlineDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("AirlineSQLConnection"));
 });
@@ -20,15 +22,19 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+{
+    options.Password.RequiredLength = 5;
+}).AddEntityFrameworkStores<AirlineDbContext>();
+
+// Register AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingConfig));
 
 // Register Repository
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
-builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Register Services
 builder.Services.AddScoped<IFlightService, FlightService>();
-builder.Services.AddScoped<IReservationService, ReservationService>();
 
 
 builder.Services.AddControllers();

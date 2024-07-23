@@ -1,6 +1,6 @@
 ﻿using AirlineReservation.Models;
 using AirlineReservation.Models.Dto;
-using AirlineReservation.Services;
+using AirlineReservation.Services.IServices;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
