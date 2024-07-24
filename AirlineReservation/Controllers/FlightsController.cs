@@ -2,26 +2,28 @@
 using AirlineReservation.Models.Dto;
 using AirlineReservation.Services.IServices;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AirlineReservation.Controllers
 {
-    [Route("api/Flights")]
+    [Route("api/flights")]
     [ApiController]
-    public class FlightsAPIController : ControllerBase
+    [Authorize]
+    public class FlightsController : ControllerBase
     {
         private readonly IFlightService _flightService;
         private readonly IMapper _mapper;
-        private readonly ILogger<FlightsAPIController> _logger;
+        private readonly ILogger<FlightsController> _logger;
 
-        public FlightsAPIController(IFlightService flightService, IMapper mapper, ILogger<FlightsAPIController> logger)
+        public FlightsController(IFlightService flightService, IMapper mapper, ILogger<FlightsController> logger)
         {
             _flightService = flightService;
             _mapper = mapper;
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetAllFlights")]
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlights()
         {
@@ -68,7 +70,7 @@ namespace AirlineReservation.Controllers
             }
         }
 
-        [HttpPost(Name = "AddFlight")]
+        [HttpPost]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -106,7 +108,7 @@ namespace AirlineReservation.Controllers
             }
         }
 
-        [HttpDelete(Name = "DeleteFlight")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -138,7 +140,7 @@ namespace AirlineReservation.Controllers
             }
         }
 
-        [HttpPut(Name = "UpdateFlight")]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -163,12 +165,6 @@ namespace AirlineReservation.Controllers
                 {
                     return NotFound();
                 }
-
-                //flight.FlightNumber = updatedFlight.FlightNumber;
-                //flight.Origin = updatedFlight.Origin;
-                //flight.Destination = updatedFlight.Destination;
-                //flight.DepartureTime = updatedFlight.DepartureTime;
-                //flight.Status = updatedFlight.Status;
 
                 _mapper.Map(updatedFlight, flight);
 
