@@ -16,7 +16,7 @@ This project includes the following components:
 ## Architecture Diagram
 - To be added
 
-  ## Features
+## Features
 
 - **Flight CRUD Operations**: Create, Read, Update, and Delete flight data.
 - **User Authentication**: Secure API access using JWT tokens.
