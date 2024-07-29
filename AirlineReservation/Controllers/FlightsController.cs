@@ -24,6 +24,7 @@ namespace AirlineReservation.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlights()
@@ -48,14 +49,14 @@ namespace AirlineReservation.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<FlightDTO>> GetFlightById(int id)
         {
+            if (id <= 0)
+            {
+                _logger.LogError("Error: Invalid Id.");
+                return BadRequest();
+            }
+
             try
             {
-                if (id == 0)
-                {
-                    _logger.LogError("Error: Invalid Id.");
-                    return BadRequest();
-                }
-
                 var flight = await _flightService.GetFlightByIdAsync(id);
 
                 if (flight is null)
@@ -79,12 +80,13 @@ namespace AirlineReservation.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<FlightDTO>> AddFlight([FromBody] FlightAddDTO flightDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest(ModelState);
-                }
 
                 if (flightDto is null)
                 {
@@ -118,14 +120,13 @@ namespace AirlineReservation.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteFlight(int id)
         {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
             try
             {
-
-                if (id == 0)
-                {
-                    return BadRequest();
-                }
-
                 var flight = _flightService.GetFlightByIdAsync(id);
 
                 if (flight is null)
@@ -151,19 +152,23 @@ namespace AirlineReservation.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> UpdateFlight(int id, [FromBody] FlightUpdateDTO updatedFlight)
         {
+            if (id <= 0 || id != updatedFlight.Id)
+            {
+                return BadRequest();
+            }
+
+            if (updatedFlight == null)
+            {
+                return BadRequest();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
-                if (updatedFlight == null)
-                {
-                    return BadRequest("Data to update f");
-                }
-
-                if (id != updatedFlight.Id)
-                {
-                    return BadRequest();
-                }
-
-
                 var flight = await _flightService.GetFlightByIdAsync(id);
 
                 if (flight is null)
