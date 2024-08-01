@@ -52,7 +52,7 @@ namespace AirlineReservation.UnitTests.Controllers
         {
             //Given
             var expectedFlight = new Flight { Id = validId, FlightNumber = $"QR579" };
-            var expectedFlightDto = new FlightDTO { Id = validId, FlightNumber = $"QR579    " };
+            var expectedFlightDto = new FlightDTO { Id = validId, FlightNumber = $"QR579" };
 
             _mockFlightService.Setup(s => s.GetFlightByIdAsync(validId)).ReturnsAsync(expectedFlight);
             _mockMapper.Setup(m => m.Map<FlightDTO>(It.IsAny<Flight>())).Returns(expectedFlightDto);
