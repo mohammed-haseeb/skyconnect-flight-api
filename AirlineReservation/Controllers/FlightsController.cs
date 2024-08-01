@@ -9,7 +9,7 @@ namespace AirlineReservation.Controllers
 {
     [Route("api/flights")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class FlightsController : ControllerBase
     {
         private readonly IFlightService _flightService;
@@ -24,7 +24,7 @@ namespace AirlineReservation.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin, User")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<FlightDTO>>> GetAllFlights()
@@ -43,6 +43,7 @@ namespace AirlineReservation.Controllers
 
 
         [HttpGet("{id}", Name = "GetFlightById")]
+        [Authorize(Roles = "Admin, User")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -52,7 +53,7 @@ namespace AirlineReservation.Controllers
             if (id <= 0)
             {
                 _logger.LogError("Error: Invalid Id.");
-                return BadRequest();
+                return BadRequest("Invalid Id. Id must be greater than 0.");
             }
 
             try
@@ -61,7 +62,7 @@ namespace AirlineReservation.Controllers
 
                 if (flight is null)
                 {
-                    return NotFound();
+                    return NotFound($"Flight with Id {id} not found.");
                 }
 
                 return Ok(_mapper.Map<FlightDTO>(flight));
@@ -87,24 +88,17 @@ namespace AirlineReservation.Controllers
 
             try
             {
-
-                if (flightDto is null)
+                var existingFlight = await _flightService.GetFlightByNumberAsync(flightDto.FlightNumber);
+                if (existingFlight != null)
                 {
-                    return BadRequest();
+                    return Conflict(new { message = "Flight with the same number already exists." });
                 }
 
-                var existFlight = await _flightService.GetFlightByNumberAsync(flightDto.FlightNumber);
-
-                if (existFlight is not null)
-                {
-                    return Conflict(new { message = "Flight with same number already exists." });
-                }
-
-                Flight flight = _mapper.Map<Flight>(flightDto);
-
+                var flight = _mapper.Map<Flight>(flightDto);
                 await _flightService.AddFlightAsync(flight);
 
-                return CreatedAtRoute("GetFlightById", new { id = flight.Id }, flight);
+                var flightToReturn = _mapper.Map<FlightDTO>(flight);
+                return CreatedAtAction(nameof(GetFlightById), new { id = flight.Id }, flightToReturn);
             }
             catch (Exception ex)
             {
@@ -122,7 +116,7 @@ namespace AirlineReservation.Controllers
         {
             if (id <= 0)
             {
-                return BadRequest();
+                return BadRequest("Invalid Id. Id must be greater than 0.");
             }
 
             try
@@ -131,7 +125,7 @@ namespace AirlineReservation.Controllers
 
                 if (flight is null)
                 {
-                    return NotFound();
+                    return NotFound($"Flight with Id {id} not found.");
                 }
 
                 await _flightService.DeleteFlightAsync(id);
@@ -154,13 +148,13 @@ namespace AirlineReservation.Controllers
         {
             if (id <= 0 || id != updatedFlight.Id)
             {
-                return BadRequest();
+                return BadRequest("Invalid Id or Id mismatch.");
             }
 
-            if (updatedFlight == null)
-            {
-                return BadRequest();
-            }
+            //if (updatedFlight == null)
+            //{
+            //    return BadRequest();
+            //}
 
             if (!ModelState.IsValid)
             {
