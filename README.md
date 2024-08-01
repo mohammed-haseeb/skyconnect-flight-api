@@ -39,6 +39,7 @@ This project includes the following components:
 - SQL Server
 - JWT for Authentication
 - AutoMapper
+- xUnit & Moq
 
 ## Note
 
