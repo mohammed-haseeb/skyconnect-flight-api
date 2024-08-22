@@ -14,7 +14,7 @@ This project includes the following components:
 - **Logging**: Implements comprehensive logging for debugging and monitoring.
 
 ## Architecture Diagram
-- To be added
+![Architecture Diagram](architecture.png)
 
 ## Features
 
